@@ -1,6 +1,6 @@
 {
   "name": "@stagyra/angular-magnetic-menu",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "license": "MIT",
   "description": "A reusable Angular 18+ magnetic sidenav-style menu component.",
   "repository": {

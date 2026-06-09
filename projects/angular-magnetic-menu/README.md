@@ -176,6 +176,9 @@ stagyra-magnetic-menu {
   --stagyra-magnetic-menu-content-bg: #ffffff;
   --stagyra-magnetic-menu-content-radius: 18px;
   --stagyra-magnetic-menu-item-active-bg: #d9dddf;
+  --stagyra-magnetic-menu-scrollbar-track: rgba(155, 166, 174, 0.1);
+  --stagyra-magnetic-menu-scrollbar-thumb: rgba(168, 178, 185, 0.72);
+  --stagyra-magnetic-menu-scrollbar-thumb-hover: rgba(138, 150, 160, 0.84);
   --stagyra-magnetic-menu-focus: #4e8cff;
 }
 ```

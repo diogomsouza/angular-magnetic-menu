@@ -4,6 +4,8 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  AfterViewChecked,
+  AfterViewInit,
   HostBinding,
   Inject,
   Input,
@@ -45,9 +47,10 @@ const FRAME_FALLBACK_MS = 16;
   styleUrl: './angular-magnetic-menu.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StagyraMagneticMenuComponent implements OnInit, OnChanges, OnDestroy {
+export class StagyraMagneticMenuComponent implements OnInit, OnChanges, AfterViewInit, AfterViewChecked, OnDestroy {
   @Input() set items(value: MagneticMenuInput | null | undefined) {
     this.sections = this.normalizeInput(value);
+    this.scheduleBodyScrollMetrics();
   }
 
   @Input({ transform: booleanAttribute }) opened = true;
@@ -75,17 +78,22 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, OnDestro
   @Output() readonly dragEnd = new EventEmitter<MagneticMenuDragEvent>();
 
   @ViewChild('handle', { static: true }) private handleRef?: ElementRef<HTMLElement>;
+  @ViewChild('body') private bodyRef?: ElementRef<HTMLElement>;
 
   @HostBinding('class.stagyra-magnetic-menu-host') readonly hostClass = true;
 
   sections: MagneticMenuSection[] = [];
   progress = 1;
+  bodyScrollable = false;
+  private bodyScrollbarThumbHeight = 42;
+  private bodyScrollbarThumbOffset = 0;
   private internalActiveItemId: string | null = null;
   private isBrowser: boolean;
   private routerSub?: Subscription;
   private removePointerMove?: () => void;
   private removePointerUp?: () => void;
   private animationFrameId: number | null = null;
+  private scrollMetricsFrameId: number | null = null;
   private suppressNextHandleClick = false;
   private dragState: {
     pointerId: number;
@@ -121,6 +129,14 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, OnDestro
     }
   }
 
+  ngAfterViewInit(): void {
+    this.scheduleBodyScrollMetrics();
+  }
+
+  ngAfterViewChecked(): void {
+    this.scheduleBodyScrollMetrics();
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['opened'] && !changes['opened'].firstChange && !this.dragState) {
       this.animateTo(this.opened ? 1 : 0, false);
@@ -139,6 +155,7 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, OnDestro
     this.routerSub?.unsubscribe();
     this.teardownPointerListeners();
     this.cancelAnimation();
+    this.cancelScrollMetrics();
   }
 
   open(): void {
@@ -155,6 +172,7 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, OnDestro
 
   setItems(items: MagneticMenuInput | null | undefined): void {
     this.sections = this.normalizeInput(items);
+    this.scheduleBodyScrollMetrics();
     this.cdr.markForCheck();
   }
 
@@ -170,6 +188,7 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, OnDestro
 
     section.items = [...section.items, normalizedItem];
     this.sections = sections;
+    this.scheduleBodyScrollMetrics();
     this.cdr.markForCheck();
   }
 
@@ -180,6 +199,7 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, OnDestro
         item.id === itemId ? this.normalizeItem({ ...item, ...patch, id: item.id }) : item
       )),
     }));
+    this.scheduleBodyScrollMetrics();
     this.cdr.markForCheck();
   }
 
@@ -190,6 +210,7 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, OnDestro
         items: section.items.filter((item) => item.id !== itemId),
       }))
       .filter((section) => section.id !== DEFAULT_SECTION_ID || section.items.length > 0);
+    this.scheduleBodyScrollMetrics();
     this.cdr.markForCheck();
   }
 
@@ -203,7 +224,12 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, OnDestro
 
   clearItems(): void {
     this.sections = [];
+    this.scheduleBodyScrollMetrics();
     this.cdr.markForCheck();
+  }
+
+  onMenuBodyScroll(): void {
+    this.updateBodyScrollMetrics();
   }
 
   onHandlePointerDown(event: PointerEvent): void {
@@ -351,6 +377,8 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, OnDestro
       '--stagyra-magnetic-menu-current-overlap': `${this.currentOverlap}px`,
       '--stagyra-magnetic-menu-progress': `${this.progress}`,
       '--stagyra-magnetic-menu-body-opacity': `${this.bodyOpacity}`,
+      '--stagyra-magnetic-menu-scrollbar-thumb-height': `${this.bodyScrollbarThumbHeight}px`,
+      '--stagyra-magnetic-menu-scrollbar-thumb-offset': `${this.bodyScrollbarThumbOffset}px`,
     };
   }
 
@@ -642,6 +670,66 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, OnDestro
       window.cancelAnimationFrame(this.animationFrameId);
     }
     this.animationFrameId = null;
+  }
+
+  private scheduleBodyScrollMetrics(): void {
+    if (!this.isBrowser || !this.bodyRef) {
+      return;
+    }
+
+    if (this.scrollMetricsFrameId !== null) {
+      return;
+    }
+
+    this.zone.runOutsideAngular(() => {
+      this.scrollMetricsFrameId = window.requestAnimationFrame(() => {
+        this.scrollMetricsFrameId = null;
+        this.zone.run(() => this.updateBodyScrollMetrics());
+      });
+    });
+  }
+
+  private updateBodyScrollMetrics(): void {
+    const body = this.bodyRef?.nativeElement;
+    if (!body) {
+      return;
+    }
+
+    const trackPadding = 48;
+    const trackHeight = Math.max(42, body.clientHeight - trackPadding);
+    const maxScroll = Math.max(0, body.scrollHeight - body.clientHeight);
+    const nextScrollable = maxScroll > 1;
+
+    if (!nextScrollable && body.scrollTop !== 0) {
+      body.scrollTop = 0;
+    }
+
+    const nextThumbHeight = nextScrollable
+      ? Math.max(42, Math.round(trackHeight * (body.clientHeight / body.scrollHeight)))
+      : trackHeight;
+    const nextThumbOffset = nextScrollable
+      ? Math.round((body.scrollTop / maxScroll) * (trackHeight - nextThumbHeight))
+      : 0;
+
+    if (
+      this.bodyScrollable === nextScrollable &&
+      this.bodyScrollbarThumbHeight === nextThumbHeight &&
+      this.bodyScrollbarThumbOffset === nextThumbOffset
+    ) {
+      return;
+    }
+
+    this.bodyScrollable = nextScrollable;
+    this.bodyScrollbarThumbHeight = nextThumbHeight;
+    this.bodyScrollbarThumbOffset = nextThumbOffset;
+    this.cdr.markForCheck();
+  }
+
+  private cancelScrollMetrics(): void {
+    if (this.scrollMetricsFrameId !== null && this.isBrowser) {
+      window.cancelAnimationFrame(this.scrollMetricsFrameId);
+    }
+    this.scrollMetricsFrameId = null;
   }
 
   private teardownPointerListeners(): void {

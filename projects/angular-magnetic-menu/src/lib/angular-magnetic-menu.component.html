@@ -23,8 +23,10 @@
     </button>
 
     <div
+      #body
       id="stagyra-magnetic-menu-body"
       class="stagyra-magnetic-menu__body"
+      (scroll)="onMenuBodyScroll()"
     >
       <div class="stagyra-magnetic-menu__header">
         <ng-content select="[magnetic-menu-header], [stagyra-magnetic-menu-header]"></ng-content>
@@ -79,6 +81,14 @@
         <ng-content select="[magnetic-menu-footer], [stagyra-magnetic-menu-footer]"></ng-content>
       </div>
     </div>
+
+    <span
+      class="stagyra-magnetic-menu__body-scrollbar"
+      [class.stagyra-magnetic-menu__body-scrollbar--visible]="bodyScrollable"
+      aria-hidden="true"
+    >
+      <span class="stagyra-magnetic-menu__body-scrollbar-thumb"></span>
+    </span>
   </aside>
 
   <main class="stagyra-magnetic-menu__content">
