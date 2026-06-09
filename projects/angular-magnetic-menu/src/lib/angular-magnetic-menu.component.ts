@@ -53,7 +53,7 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, OnDestro
   @Input({ transform: booleanAttribute }) opened = true;
   @Input() side: MagneticMenuSide = 'left';
   @Input() theme: MagneticMenuTheme = 'light';
-  @Input({ transform: numberAttribute }) openedSize = 348;
+  @Input({ transform: numberAttribute }) openedSize = 300;
   @Input({ transform: numberAttribute }) closedSize = 6;
   @Input({ transform: numberAttribute }) handleSize = 28;
   @Input({ transform: numberAttribute }) handleInset = 5;

@@ -123,7 +123,7 @@ The component does not render internal add buttons such as "+ Add Status" or "+ 
 | `opened` | `true` | Controlled open state. Supports `[(opened)]`. |
 | `side` | `'left'` | `'left'` or `'right'`. |
 | `theme` | `'light'` | `'light'`, `'dark'`, or `'auto'`. |
-| `openedSize` | `348` | Open panel size in pixels. |
+| `openedSize` | `300` | Open panel size in pixels. Change this input to customize the menu width. |
 | `closedSize` | `6` | Closed strip size in pixels. |
 | `handleSize` | `28` | Magnetic handle width in pixels. |
 | `handleInset` | `5` | Moves the handle slightly into the content plane. |
