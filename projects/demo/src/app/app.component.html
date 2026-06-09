@@ -1,0 +1,115 @@
+<stagyra-magnetic-menu
+  #menu
+  class="demo-menu"
+  [items]="menuItems"
+  [opened]="opened"
+  [side]="side"
+  [theme]="theme"
+  [openedSize]="348"
+  [closedSize]="7"
+  [handleSize]="28"
+  [handleInset]="5"
+  [dragEnabled]="dragEnabled"
+  [clickToToggle]="clickToToggle"
+  [activeItemId]="activeItemId"
+  [positionThreshold]="0.48"
+  [velocityThreshold]="0.42"
+  [snapAnimationMs]="440"
+  (openedChange)="opened = $event"
+  (itemClick)="handleItemClick($event)"
+>
+  <div magnetic-menu-header class="menu-heading">
+    <span>Opportunities</span>
+  </div>
+
+  <section class="workspace">
+    <header class="toolbar">
+      <div class="status">
+        <span class="status__dot"></span>
+        <span>{{ lastAction }}</span>
+      </div>
+
+      <div class="toolbar__controls">
+        <button type="button" class="icon-button" aria-label="Open menu" (click)="menu.open()">
+          <span class="material-symbols-rounded">left_panel_open</span>
+        </button>
+        <button type="button" class="icon-button" aria-label="Close menu" (click)="menu.close()">
+          <span class="material-symbols-rounded">left_panel_close</span>
+        </button>
+        <button type="button" class="icon-button" aria-label="Add item" (click)="addExternalItem()">
+          <span class="material-symbols-rounded">add</span>
+        </button>
+        <button type="button" class="icon-button" aria-label="Hide or show Design" (click)="toggleDesign()">
+          <span class="material-symbols-rounded">{{ hiddenDesign ? 'visibility' : 'visibility_off' }}</span>
+        </button>
+        <button type="button" class="icon-button" aria-label="Reset items" (click)="resetItems()">
+          <span class="material-symbols-rounded">restart_alt</span>
+        </button>
+        <button type="button" class="icon-button" aria-label="Toggle theme" (click)="toggleTheme()">
+          <span class="material-symbols-rounded">{{ theme === 'dark' ? 'light_mode' : 'dark_mode' }}</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="control-strip">
+      <div class="segmented" aria-label="Menu side">
+        <button type="button" [class.active]="side === 'left'" (click)="setSide('left')">Left</button>
+        <button type="button" [class.active]="side === 'right'" (click)="setSide('right')">Right</button>
+      </div>
+
+      <label class="toggle">
+        <input type="checkbox" [checked]="dragEnabled" (change)="dragEnabled = !dragEnabled">
+        <span>Drag</span>
+      </label>
+
+      <label class="toggle">
+        <input type="checkbox" [checked]="clickToToggle" (change)="clickToToggle = !clickToToggle">
+        <span>Click</span>
+      </label>
+    </div>
+
+    <div class="content-grid">
+      <article class="panel panel--primary">
+        <div class="panel__header">
+          <span class="eyebrow">Pipeline</span>
+          <strong>$42.8k</strong>
+        </div>
+        <div class="chart-bars" aria-hidden="true">
+          <span style="--h: 48%"></span>
+          <span style="--h: 64%"></span>
+          <span style="--h: 38%"></span>
+          <span style="--h: 82%"></span>
+          <span style="--h: 56%"></span>
+          <span style="--h: 72%"></span>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel__header">
+          <span class="eyebrow">Activity</span>
+          <strong>18</strong>
+        </div>
+        <div class="skeleton-list" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </article>
+
+      <article class="panel panel--wide">
+        <div class="panel__header">
+          <span class="eyebrow">Queue</span>
+          <strong>Open deals</strong>
+        </div>
+        <div class="rows" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </article>
+    </div>
+  </section>
+</stagyra-magnetic-menu>

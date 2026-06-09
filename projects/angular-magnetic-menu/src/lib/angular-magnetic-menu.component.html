@@ -1,0 +1,87 @@
+<div
+  class="stagyra-magnetic-menu"
+  [ngClass]="shellClass"
+  [ngStyle]="hostStyles"
+>
+  <aside
+    class="stagyra-magnetic-menu__panel"
+    [attr.aria-hidden]="bodyAriaHidden"
+  >
+    <button
+      #handle
+      type="button"
+      class="stagyra-magnetic-menu__handle"
+      [attr.aria-label]="handleAriaLabel"
+      [attr.aria-expanded]="opened"
+      [attr.aria-controls]="'stagyra-magnetic-menu-body'"
+      (click)="onHandleClick()"
+      (keydown)="onHandleKeydown($event)"
+      (pointerdown)="onHandlePointerDown($event)"
+    >
+      <span class="stagyra-magnetic-menu__handle-track"></span>
+      <span class="stagyra-magnetic-menu__handle-arrows" aria-hidden="true"></span>
+    </button>
+
+    <div
+      id="stagyra-magnetic-menu-body"
+      class="stagyra-magnetic-menu__body"
+    >
+      <div class="stagyra-magnetic-menu__header">
+        <ng-content select="[magnetic-menu-header], [stagyra-magnetic-menu-header]"></ng-content>
+      </div>
+
+      <nav class="stagyra-magnetic-menu__nav" aria-label="Magnetic menu">
+        <section
+          *ngFor="let section of visibleSections(); trackBy: trackSection"
+          class="stagyra-magnetic-menu__section"
+        >
+          <h2
+            *ngIf="section.title"
+            class="stagyra-magnetic-menu__section-title"
+          >
+            {{ section.title }}
+          </h2>
+
+          <button
+            *ngFor="let item of section.items; trackBy: trackItem"
+            type="button"
+            class="stagyra-magnetic-menu__item"
+            [class.stagyra-magnetic-menu__item--active]="isItemActive(item)"
+            [class.stagyra-magnetic-menu__item--disabled]="item.disabled"
+            [attr.aria-current]="isItemActive(item) ? 'page' : null"
+            [attr.aria-disabled]="item.disabled"
+            [attr.aria-label]="item.ariaLabel || item.label"
+            [attr.title]="item.tooltip || null"
+            [attr.tabindex]="item.disabled ? -1 : itemTabIndex"
+            (click)="onItemClick(item, section, $event)"
+            (keydown)="onItemKeydown(item, section, $event)"
+          >
+            <span class="stagyra-magnetic-menu__item-icon" aria-hidden="true">
+              <span *ngIf="item.iconClass" [class]="item.iconClass"></span>
+              <span *ngIf="!item.iconClass && item.icon" class="material-symbols-rounded">
+                {{ item.icon }}
+              </span>
+            </span>
+
+            <span class="stagyra-magnetic-menu__item-label">{{ item.label }}</span>
+
+            <span
+              *ngIf="item.count !== undefined && item.count !== null"
+              class="stagyra-magnetic-menu__item-count"
+            >
+              {{ item.count }}
+            </span>
+          </button>
+        </section>
+      </nav>
+
+      <div class="stagyra-magnetic-menu__footer">
+        <ng-content select="[magnetic-menu-footer], [stagyra-magnetic-menu-footer]"></ng-content>
+      </div>
+    </div>
+  </aside>
+
+  <main class="stagyra-magnetic-menu__content">
+    <ng-content></ng-content>
+  </main>
+</div>

@@ -1,0 +1,39 @@
+{
+  "name": "@stagyra/angular-magnetic-menu",
+  "version": "0.1.1",
+  "license": "MIT",
+  "description": "A reusable Angular 18+ magnetic sidenav-style menu component.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diogomsouza/angular-magnetic-menu.git"
+  },
+  "bugs": {
+    "url": "https://github.com/diogomsouza/angular-magnetic-menu/issues"
+  },
+  "homepage": "https://github.com/diogomsouza/angular-magnetic-menu#readme",
+  "keywords": [
+    "angular",
+    "menu",
+    "sidenav",
+    "drawer",
+    "magnetic",
+    "navigation"
+  ],
+  "peerDependencies": {
+    "@angular/common": ">=18.0.0",
+    "@angular/core": ">=18.0.0",
+    "@angular/router": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@angular/router": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false
+}
