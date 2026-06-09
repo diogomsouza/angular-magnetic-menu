@@ -7,8 +7,10 @@
   [dragEnabled]="dragEnabled"
   [clickToToggle]="clickToToggle"
   [activeItemId]="activeItemId"
+  [footerMenu]="footerMenu"
   (openedChange)="opened = $event"
   (itemClick)="handleItemClick($event)"
+  (footerMenuItemClick)="handleFooterMenuItemClick($event)"
 >
   <div magnetic-menu-header class="menu-heading">
     <span>Opportunities</span>

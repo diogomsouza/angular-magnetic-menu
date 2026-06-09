@@ -26,6 +26,9 @@ import { NavigationEnd, Router } from '@angular/router';
 import { Subscription, filter } from 'rxjs';
 import {
   MagneticMenuDragEvent,
+  MagneticMenuFooterAction,
+  MagneticMenuFooterActionEvent,
+  MagneticMenuFooterMenu,
   MagneticMenuInput,
   MagneticMenuItem,
   MagneticMenuItemEvent,
@@ -68,12 +71,14 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, AfterVie
   @Input({ transform: numberAttribute }) velocityThreshold = 0.42;
   @Input({ transform: numberAttribute }) snapAnimationMs = 440;
   @Input() activeItemId: string | null | undefined;
+  @Input() footerMenu: MagneticMenuFooterMenu | null | undefined;
   @Input() handleOpenAriaLabel = 'Open menu';
   @Input() handleCloseAriaLabel = 'Close menu';
 
   @Output() readonly openedChange = new EventEmitter<boolean>();
   @Output() readonly itemClick = new EventEmitter<MagneticMenuItemEvent>();
   @Output() readonly activeItemChange = new EventEmitter<string | null>();
+  @Output() readonly footerMenuItemClick = new EventEmitter<MagneticMenuFooterActionEvent>();
   @Output() readonly dragStart = new EventEmitter<MagneticMenuDragEvent>();
   @Output() readonly dragEnd = new EventEmitter<MagneticMenuDragEvent>();
 
@@ -84,6 +89,7 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, AfterVie
 
   sections: MagneticMenuSection[] = [];
   progress = 1;
+  footerMenuOpen = false;
   bodyScrollable = false;
   private bodyScrollbarThumbHeight = 42;
   private bodyScrollbarThumbOffset = 0;
@@ -170,6 +176,32 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, AfterVie
     this.setOpened(!this.opened);
   }
 
+  openFooterMenu(): void {
+    if (!this.footerMenu || !this.opened) {
+      return;
+    }
+
+    this.footerMenuOpen = true;
+    this.cdr.markForCheck();
+  }
+
+  closeFooterMenu(): void {
+    if (!this.footerMenuOpen) {
+      return;
+    }
+
+    this.footerMenuOpen = false;
+    this.cdr.markForCheck();
+  }
+
+  toggleFooterMenu(): void {
+    if (this.footerMenuOpen) {
+      this.closeFooterMenu();
+    } else {
+      this.openFooterMenu();
+    }
+  }
+
   setItems(items: MagneticMenuInput | null | undefined): void {
     this.sections = this.normalizeInput(items);
     this.scheduleBodyScrollMetrics();
@@ -230,6 +262,46 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, AfterVie
 
   onMenuBodyScroll(): void {
     this.updateBodyScrollMetrics();
+  }
+
+  onShellClick(): void {
+    this.closeFooterMenu();
+  }
+
+  onFooterMenuClick(event: MouseEvent): void {
+    event.stopPropagation();
+  }
+
+  onFooterTriggerClick(event: MouseEvent): void {
+    event.stopPropagation();
+    this.toggleFooterMenu();
+  }
+
+  onFooterTriggerKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.closeFooterMenu();
+      return;
+    }
+
+    if (event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+
+    event.preventDefault();
+    this.toggleFooterMenu();
+  }
+
+  onFooterActionClick(item: MagneticMenuFooterAction, event: MouseEvent): void {
+    event.stopPropagation();
+
+    if (item.disabled) {
+      event.preventDefault();
+      return;
+    }
+
+    this.footerMenuItemClick.emit({ item });
+    this.closeFooterMenu();
   }
 
   onHandlePointerDown(event: PointerEvent): void {
@@ -355,6 +427,10 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, AfterVie
     return item.id;
   }
 
+  trackFooterAction(_: number, item: MagneticMenuFooterAction): string {
+    return item.id;
+  }
+
   get shellClass(): Record<string, boolean> {
     return {
       'stagyra-magnetic-menu--right': this.side === 'right',
@@ -364,7 +440,16 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, AfterVie
       'stagyra-magnetic-menu--theme-light': this.theme === 'light',
       'stagyra-magnetic-menu--theme-dark': this.theme === 'dark',
       'stagyra-magnetic-menu--theme-auto': this.theme === 'auto',
+      'stagyra-magnetic-menu--has-footer-menu': !!this.footerMenu,
     };
+  }
+
+  get visibleFooterItems(): MagneticMenuFooterAction[] {
+    return this.footerMenu?.items.filter((item) => item.visible !== false) ?? [];
+  }
+
+  get footerTriggerAriaLabel(): string {
+    return this.footerMenu?.ariaLabel || this.footerMenu?.label || 'Open menu';
   }
 
   get hostStyles(): Record<string, string> {
@@ -464,6 +549,10 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, AfterVie
     if (this.opened !== opened) {
       this.opened = opened;
       this.openedChange.emit(opened);
+    }
+
+    if (!opened) {
+      this.closeFooterMenu();
     }
 
     this.animateTo(opened ? 1 : 0, true);

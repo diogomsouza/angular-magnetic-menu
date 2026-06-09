@@ -1,5 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import {
+  MagneticMenuFooterActionEvent,
+  MagneticMenuFooterMenu,
   MagneticMenuItemEvent,
   MagneticMenuSection,
   StagyraMagneticMenuComponent,
@@ -25,6 +27,30 @@ export class AppComponent {
   hiddenDesign = false;
   customItemIndex = 1;
   lastAction = 'All selected';
+
+  get footerMenu(): MagneticMenuFooterMenu {
+    return {
+      label: 'Settings',
+      icon: 'settings',
+      ariaLabel: 'Account and settings',
+      user: {
+        label: 'diogomsouza@gmail.com',
+        subtitle: 'Personal account',
+        avatarText: 'D',
+      },
+      items: [
+        { id: 'profile', label: 'Profile', icon: 'account_circle' },
+        { id: 'settings', label: 'Settings', icon: 'settings', hint: 'Ctrl+,' },
+        {
+          id: 'theme',
+          label: this.theme === 'dark' ? 'Light theme' : 'Dark theme',
+          icon: this.theme === 'dark' ? 'light_mode' : 'dark_mode',
+        },
+        { id: 'usage', label: 'Usage remaining', icon: 'speed', hint: '10%', separatorBefore: true },
+        { id: 'logout', label: 'Log out', icon: 'logout', separatorBefore: true },
+      ],
+    };
+  }
 
   readonly menuItems: MagneticMenuSection[] = [
     {
@@ -56,6 +82,16 @@ export class AppComponent {
 
   handleItemClick(event: MagneticMenuItemEvent): void {
     this.activeItemId = event.item.id;
+    this.lastAction = `${event.item.label} selected`;
+  }
+
+  handleFooterMenuItemClick(event: MagneticMenuFooterActionEvent): void {
+    if (event.item.id === 'theme') {
+      this.toggleTheme();
+      this.lastAction = `${this.theme === 'dark' ? 'Dark' : 'Light'} theme selected`;
+      return;
+    }
+
     this.lastAction = `${event.item.label} selected`;
   }
 

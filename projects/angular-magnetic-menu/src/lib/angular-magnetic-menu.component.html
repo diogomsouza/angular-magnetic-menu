@@ -2,6 +2,8 @@
   class="stagyra-magnetic-menu"
   [ngClass]="shellClass"
   [ngStyle]="hostStyles"
+  (click)="onShellClick()"
+  (keydown.escape)="closeFooterMenu()"
 >
   <aside
     class="stagyra-magnetic-menu__panel"
@@ -91,6 +93,79 @@
     >
       <span class="stagyra-magnetic-menu__body-scrollbar-thumb"></span>
     </span>
+
+    <div
+      *ngIf="footerMenu as menu"
+      class="stagyra-magnetic-menu__footer-menu"
+      (click)="onFooterMenuClick($event)"
+    >
+      <div
+        *ngIf="footerMenuOpen"
+        class="stagyra-magnetic-menu__footer-popup"
+        role="menu"
+        [attr.aria-label]="menu.ariaLabel || menu.label"
+      >
+        <div
+          *ngIf="menu.user"
+          class="stagyra-magnetic-menu__footer-user"
+        >
+          <span class="stagyra-magnetic-menu__footer-avatar" aria-hidden="true">
+            <img *ngIf="menu.user.avatarUrl" [src]="menu.user.avatarUrl" alt="">
+            <span *ngIf="!menu.user.avatarUrl">{{ menu.user.avatarText || menu.user.label.charAt(0) }}</span>
+          </span>
+          <span class="stagyra-magnetic-menu__footer-user-text">
+            <span class="stagyra-magnetic-menu__footer-user-label">{{ menu.user.label }}</span>
+            <span *ngIf="menu.user.subtitle" class="stagyra-magnetic-menu__footer-user-subtitle">
+              {{ menu.user.subtitle }}
+            </span>
+          </span>
+        </div>
+
+        <button
+          *ngFor="let item of visibleFooterItems; trackBy: trackFooterAction"
+          type="button"
+          class="stagyra-magnetic-menu__footer-action"
+          [class.stagyra-magnetic-menu__footer-action--separated]="item.separatorBefore"
+          [class.stagyra-magnetic-menu__footer-action--disabled]="item.disabled"
+          [attr.aria-disabled]="item.disabled"
+          [attr.aria-label]="item.ariaLabel || item.label"
+          [attr.tabindex]="item.disabled ? -1 : 0"
+          role="menuitem"
+          (click)="onFooterActionClick(item, $event)"
+        >
+          <span class="stagyra-magnetic-menu__footer-action-icon" aria-hidden="true">
+            <span *ngIf="item.iconClass" [class]="item.iconClass">
+              {{ item.icon || '' }}
+            </span>
+            <span *ngIf="!item.iconClass && item.icon" class="material-symbols-rounded">
+              {{ item.icon }}
+            </span>
+          </span>
+          <span class="stagyra-magnetic-menu__footer-action-label">{{ item.label }}</span>
+          <span *ngIf="item.hint" class="stagyra-magnetic-menu__footer-action-hint">{{ item.hint }}</span>
+        </button>
+      </div>
+
+      <button
+        type="button"
+        class="stagyra-magnetic-menu__footer-trigger"
+        [attr.aria-label]="footerTriggerAriaLabel"
+        [attr.aria-expanded]="footerMenuOpen"
+        aria-haspopup="menu"
+        (click)="onFooterTriggerClick($event)"
+        (keydown)="onFooterTriggerKeydown($event)"
+      >
+        <span class="stagyra-magnetic-menu__footer-trigger-icon" aria-hidden="true">
+          <span *ngIf="menu.iconClass" [class]="menu.iconClass">
+            {{ menu.icon || '' }}
+          </span>
+          <span *ngIf="!menu.iconClass && menu.icon" class="material-symbols-rounded">
+            {{ menu.icon }}
+          </span>
+        </span>
+        <span class="stagyra-magnetic-menu__footer-trigger-label">{{ menu.label }}</span>
+      </button>
+    </div>
   </aside>
 
   <main class="stagyra-magnetic-menu__content">

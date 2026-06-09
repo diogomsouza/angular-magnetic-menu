@@ -111,6 +111,32 @@ export interface MagneticMenuItem {
   action?: string;
   ariaLabel?: string;
 }
+
+export interface MagneticMenuFooterMenu {
+  label: string;
+  icon?: string;
+  iconClass?: string;
+  ariaLabel?: string;
+  user?: {
+    label: string;
+    subtitle?: string;
+    avatarText?: string;
+    avatarUrl?: string;
+  };
+  items: MagneticMenuFooterAction[];
+}
+
+export interface MagneticMenuFooterAction {
+  id: string;
+  label: string;
+  icon?: string;
+  iconClass?: string;
+  hint?: string;
+  visible?: boolean;
+  disabled?: boolean;
+  separatorBefore?: boolean;
+  ariaLabel?: string;
+}
 ```
 
 The component does not render internal add buttons such as "+ Add Status" or "+ Add Group". Create, update, hide, show, and remove items through inputs or public component methods.
@@ -135,12 +161,14 @@ The component does not render internal add buttons such as "+ Add Status" or "+ 
 | `snapAnimationMs` | `440` | Final magnetic snap animation duration. |
 | `activeItemId` | `undefined` | Manual active item. Overrides router-derived active state. |
 | `closeOnItemClick` | `false` | Closes the panel after an item click. |
+| `footerMenu` | `undefined` | Optional fixed footer trigger that opens an upward account/settings menu. |
 
 ## Outputs
 
 - `openedChange`
 - `itemClick`
 - `activeItemChange`
+- `footerMenuItemClick`
 - `dragStart`
 - `dragEnd`
 
@@ -151,6 +179,9 @@ Use `@ViewChild(StagyraMagneticMenuComponent)` to call:
 - `open()`
 - `close()`
 - `toggle()`
+- `openFooterMenu()`
+- `closeFooterMenu()`
+- `toggleFooterMenu()`
 - `setItems(items)`
 - `addItem(item, sectionId?)`
 - `updateItem(itemId, patch)`
@@ -164,6 +195,47 @@ Use `@ViewChild(StagyraMagneticMenuComponent)` to call:
 - `[magnetic-menu-header]` or `[stagyra-magnetic-menu-header]`
 - `[magnetic-menu-footer]` or `[stagyra-magnetic-menu-footer]`
 - default projected content becomes the main content area pushed by the menu
+
+## Footer Menu
+
+Use `footerMenu` to render a fixed footer trigger that opens an upward popup for account, settings, theme, usage, and logout actions:
+
+```html
+<stagyra-magnetic-menu
+  [items]="items"
+  [footerMenu]="footerMenu"
+  (footerMenuItemClick)="handleFooterAction($event)"
+>
+  ...
+</stagyra-magnetic-menu>
+```
+
+```ts
+footerMenu = {
+  label: 'Settings',
+  icon: 'settings',
+  user: {
+    label: 'diogomsouza@gmail.com',
+    subtitle: 'Personal account',
+    avatarText: 'D',
+  },
+  items: [
+    { id: 'profile', label: 'Profile', icon: 'account_circle' },
+    { id: 'settings', label: 'Settings', icon: 'settings', hint: 'Ctrl+,' },
+    { id: 'theme', label: 'Toggle theme', icon: 'dark_mode' },
+    { id: 'usage', label: 'Usage remaining', icon: 'speed', hint: '10%', separatorBefore: true },
+    { id: 'logout', label: 'Log out', icon: 'logout', separatorBefore: true },
+  ],
+};
+
+handleFooterAction(event: MagneticMenuFooterActionEvent): void {
+  if (event.item.id === 'logout') {
+    // call your logout flow
+  }
+}
+```
+
+The component only emits the selected footer action. Theme switching, routing, logout, and profile dialogs stay controlled by the consuming app.
 
 ## Styling
 

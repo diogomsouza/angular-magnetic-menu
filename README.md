@@ -37,6 +37,8 @@ npm publish --access public
 
 See [projects/angular-magnetic-menu/README.md](projects/angular-magnetic-menu/README.md) for API usage.
 
+The package also supports an optional `footerMenu` account/settings popup rendered from the menu footer. It is configured by data and emits `footerMenuItemClick` for actions such as profile, theme, usage, and logout.
+
 ## Icon Setup
 
 The npm package documentation is generated from [projects/angular-magnetic-menu/README.md](projects/angular-magnetic-menu/README.md). The component supports:

@@ -21,6 +21,34 @@ export interface MagneticMenuItem {
   ariaLabel?: string;
 }
 
+export interface MagneticMenuFooterUser {
+  label: string;
+  subtitle?: string;
+  avatarText?: string;
+  avatarUrl?: string;
+}
+
+export interface MagneticMenuFooterAction {
+  id: string;
+  label: string;
+  icon?: string;
+  iconClass?: string;
+  hint?: string;
+  visible?: boolean;
+  disabled?: boolean;
+  separatorBefore?: boolean;
+  ariaLabel?: string;
+}
+
+export interface MagneticMenuFooterMenu {
+  label: string;
+  icon?: string;
+  iconClass?: string;
+  ariaLabel?: string;
+  user?: MagneticMenuFooterUser;
+  items: MagneticMenuFooterAction[];
+}
+
 export interface MagneticMenuSection {
   id: string;
   title?: string;
@@ -40,6 +68,10 @@ export type MagneticMenuInput =
 export interface MagneticMenuItemEvent {
   item: MagneticMenuItem;
   section: MagneticMenuSection;
+}
+
+export interface MagneticMenuFooterActionEvent {
+  item: MagneticMenuFooterAction;
 }
 
 export interface MagneticMenuDragEvent {
