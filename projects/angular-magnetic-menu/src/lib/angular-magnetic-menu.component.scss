@@ -1,7 +1,9 @@
 :host {
   display: block;
+  width: var(--stagyra-magnetic-menu-width, 100%);
+  height: var(--stagyra-magnetic-menu-height, 100dvh);
   min-width: 0;
-  min-height: 0;
+  min-height: var(--stagyra-magnetic-menu-min-height, 360px);
   color: var(--stagyra-magnetic-menu-text, #16191c);
   font-family: var(
     --stagyra-magnetic-menu-font-family,
@@ -36,7 +38,7 @@
   width: 100%;
   min-width: 0;
   height: 100%;
-  min-height: 360px;
+  min-height: 100%;
   overflow: hidden;
   color: var(--stagyra-magnetic-menu-text);
   background: var(--stagyra-magnetic-menu-panel-bg);

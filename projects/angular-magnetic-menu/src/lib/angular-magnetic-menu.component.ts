@@ -61,9 +61,9 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, OnDestro
   @Input({ transform: booleanAttribute }) dragEnabled = true;
   @Input({ transform: booleanAttribute }) clickToToggle = true;
   @Input({ transform: booleanAttribute }) closeOnItemClick = false;
-  @Input({ transform: numberAttribute }) positionThreshold = 0.5;
-  @Input({ transform: numberAttribute }) velocityThreshold = 0.45;
-  @Input({ transform: numberAttribute }) snapAnimationMs = 420;
+  @Input({ transform: numberAttribute }) positionThreshold = 0.48;
+  @Input({ transform: numberAttribute }) velocityThreshold = 0.42;
+  @Input({ transform: numberAttribute }) snapAnimationMs = 440;
   @Input() activeItemId: string | null | undefined;
   @Input() handleOpenAriaLabel = 'Open menu';
   @Input() handleCloseAriaLabel = 'Close menu';

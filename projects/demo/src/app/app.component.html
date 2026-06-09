@@ -1,20 +1,12 @@
 <stagyra-magnetic-menu
   #menu
-  class="demo-menu"
   [items]="menuItems"
   [opened]="opened"
   [side]="side"
   [theme]="theme"
-  [openedSize]="348"
-  [closedSize]="7"
-  [handleSize]="28"
-  [handleInset]="5"
   [dragEnabled]="dragEnabled"
   [clickToToggle]="clickToToggle"
   [activeItemId]="activeItemId"
-  [positionThreshold]="0.48"
-  [velocityThreshold]="0.42"
-  [snapAnimationMs]="440"
   (openedChange)="opened = $event"
   (itemClick)="handleItemClick($event)"
 >

@@ -2,6 +2,8 @@
 
 Reusable Angular 18+ magnetic sidenav-style menu. The component ships as a complete container: it renders the menu panel from a typed item model, keeps a narrow closed strip with a draggable handle, and pushes the main content while opening and closing.
 
+By default, `<stagyra-magnetic-menu>` fills the viewport (`100dvh`) and includes the same light/dark visual design used by the demo. No wrapper CSS is required for the menu, content plane, closed strip, or centered drag handle.
+
 ## Install
 
 ```bash
@@ -128,9 +130,9 @@ The component does not render internal add buttons such as "+ Add Status" or "+ 
 | `contentPlaneOverlap` | `18` | Content plane overlap over the open panel, keeping the page visually above the menu. |
 | `dragEnabled` | `true` | Enables pointer drag on the handle. |
 | `clickToToggle` | `true` | Enables click/keyboard toggle on the handle. |
-| `positionThreshold` | `0.5` | Drag progress needed to snap open when velocity is low. |
-| `velocityThreshold` | `0.45` | Pointer velocity in px/ms that snaps open or closed. |
-| `snapAnimationMs` | `420` | Final magnetic snap animation duration. |
+| `positionThreshold` | `0.48` | Drag progress needed to snap open when velocity is low. |
+| `velocityThreshold` | `0.42` | Pointer velocity in px/ms that snaps open or closed. |
+| `snapAnimationMs` | `440` | Final magnetic snap animation duration. |
 | `activeItemId` | `undefined` | Manual active item. Overrides router-derived active state. |
 | `closeOnItemClick` | `false` | Closes the panel after an item click. |
 
@@ -165,10 +167,11 @@ Use `@ViewChild(StagyraMagneticMenuComponent)` to call:
 
 ## Styling
 
-The component includes defaults inspired by the reference video and exposes CSS variables:
+The component includes sensible defaults and exposes CSS variables:
 
 ```scss
 stagyra-magnetic-menu {
+  --stagyra-magnetic-menu-height: 100dvh;
   --stagyra-magnetic-menu-panel-bg: #eef2f3;
   --stagyra-magnetic-menu-content-bg: #ffffff;
   --stagyra-magnetic-menu-content-radius: 18px;
@@ -187,7 +190,59 @@ Use the built-in dark theme directly:
 
 `theme="auto"` follows `prefers-color-scheme`.
 
-Icons can be provided with `icon` for Material Symbols/Material Icons names, `iconClass` for external icon libraries, or omitted.
+## Icons
+
+The menu has two icon modes:
+
+- `icon`: renders the value inside a `<span class="material-symbols-rounded">...</span>`.
+- `iconClass`: renders an empty `<span>` with the provided CSS classes, for custom icon libraries.
+
+### Material Symbols
+
+The default project style uses Google Material Symbols Rounded. Add the font once in your application, usually in `src/styles.scss`:
+
+```scss
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0&display=swap");
+
+.material-symbols-rounded {
+  direction: ltr;
+  display: inline-block;
+  font-family: "Material Symbols Rounded";
+  font-feature-settings: "liga";
+  font-size: 22px;
+  font-style: normal;
+  font-weight: normal;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+}
+```
+
+Then use Material icon names in the item object:
+
+```ts
+items = [
+  { id: 'all', label: 'All', icon: 'format_list_bulleted', count: 4 },
+  { id: 'archived', label: 'Archived', icon: 'inventory_2', count: 0 },
+  { id: 'settings', label: 'Settings', icon: 'settings' },
+];
+```
+
+### Custom Icon Libraries
+
+Use `iconClass` when your project already uses another icon system, such as Font Awesome, Bootstrap Icons, PrimeIcons, or a custom CSS sprite. The component will apply those classes to the inner icon element.
+
+```ts
+items = [
+  { id: 'home', label: 'Home', iconClass: 'bi bi-house' },
+  { id: 'reports', label: 'Reports', iconClass: 'pi pi-chart-line' },
+  { id: 'users', label: 'Users', iconClass: 'fa-solid fa-users' },
+];
+```
+
+Make sure the chosen icon library CSS is loaded by your application. If both `iconClass` and `icon` are provided, `iconClass` takes precedence.
 
 ## Publish
 

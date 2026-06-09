@@ -1,24 +1,3 @@
-:host {
-  display: block;
-  width: 100vw;
-  height: 100vh;
-  min-width: 320px;
-  min-height: 520px;
-}
-
-.demo-menu {
-  width: 100%;
-  height: 100%;
-  --stagyra-magnetic-menu-content-bg: #ffffff;
-  --stagyra-magnetic-menu-panel-bg: #eef2f3;
-  --stagyra-magnetic-menu-focus: #2364d2;
-}
-
-.demo-menu.stagyra-magnetic-menu-host:has(.stagyra-magnetic-menu--theme-dark) {
-  --stagyra-magnetic-menu-content-bg: #202327;
-  --stagyra-magnetic-menu-panel-bg: #171a1d;
-}
-
 .menu-heading {
   margin-bottom: 18px;
   font-size: 18px;
