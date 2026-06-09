@@ -42,7 +42,7 @@ See [projects/angular-magnetic-menu/README.md](projects/angular-magnetic-menu/RE
 The npm package documentation is generated from [projects/angular-magnetic-menu/README.md](projects/angular-magnetic-menu/README.md). The component supports:
 
 - `icon`: Material Symbols/Material Icons names, using the project's default `material-symbols-rounded` style.
-- `iconClass`: custom icon CSS classes from libraries such as Bootstrap Icons, PrimeIcons, Font Awesome, or project-specific icons.
+- `iconClass`: custom icon CSS classes from libraries such as Bootstrap Icons, PrimeIcons, Font Awesome, Material Icons classic, or project-specific icons.
 
 For the default Material Symbols style, load the font once in the consuming application:
 
@@ -71,5 +71,8 @@ Use `iconClass` when another icon system is preferred:
 items = [
   { id: 'home', label: 'Home', iconClass: 'bi bi-house' },
   { id: 'reports', label: 'Reports', iconClass: 'pi pi-chart-line' },
+  { id: 'list', label: 'List', icon: 'list_alt', iconClass: 'material-icons' },
 ];
 ```
+
+For ligature fonts such as classic Material Icons, provide both `icon` and `iconClass`; the component keeps the `icon` text inside the custom icon element.

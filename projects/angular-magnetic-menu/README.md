@@ -198,7 +198,9 @@ Use the built-in dark theme directly:
 The menu has two icon modes:
 
 - `icon`: renders the value inside a `<span class="material-symbols-rounded">...</span>`.
-- `iconClass`: renders an empty `<span>` with the provided CSS classes, for custom icon libraries.
+- `iconClass`: applies custom CSS classes to the inner icon `<span>`.
+
+When `iconClass` and `icon` are both provided, `iconClass` controls the CSS class and `icon` stays as the element text. This supports ligature icon fonts such as classic Material Icons.
 
 ### Material Symbols
 
@@ -245,7 +247,25 @@ items = [
 ];
 ```
 
-Make sure the chosen icon library CSS is loaded by your application. If both `iconClass` and `icon` are provided, `iconClass` takes precedence.
+For ligature fonts, provide both `iconClass` and `icon`:
+
+```scss
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+
+.material-icons {
+  font-family: "Material Icons";
+  font-feature-settings: "liga";
+}
+```
+
+```ts
+items = [
+  { id: 'list', label: 'List', icon: 'list_alt', iconClass: 'material-icons' },
+  { id: 'report', label: 'Report', icon: 'assessment', iconClass: 'material-icons' },
+];
+```
+
+Make sure the chosen icon library CSS is loaded by your application.
 
 ## Publish
 

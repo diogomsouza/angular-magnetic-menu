@@ -59,7 +59,9 @@
             (keydown)="onItemKeydown(item, section, $event)"
           >
             <span class="stagyra-magnetic-menu__item-icon" aria-hidden="true">
-              <span *ngIf="item.iconClass" [class]="item.iconClass"></span>
+              <span *ngIf="item.iconClass" [class]="item.iconClass">
+                {{ item.icon || '' }}
+              </span>
               <span *ngIf="!item.iconClass && item.icon" class="material-symbols-rounded">
                 {{ item.icon }}
               </span>
