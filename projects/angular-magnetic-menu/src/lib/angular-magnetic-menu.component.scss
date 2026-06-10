@@ -236,6 +236,7 @@
 }
 
 .stagyra-magnetic-menu__footer-trigger {
+  column-gap: 10px;
   min-height: 38px;
   padding: 0 10px;
   border-radius: var(--stagyra-magnetic-menu-item-radius, 8px);
@@ -348,6 +349,7 @@
 }
 
 .stagyra-magnetic-menu__footer-action {
+  column-gap: 10px;
   min-height: 34px;
   padding: 0 8px;
   border-radius: 7px;
@@ -415,6 +417,7 @@
 .stagyra-magnetic-menu__item {
   display: grid;
   grid-template-columns: 24px minmax(0, 1fr) auto;
+  column-gap: 10px;
   align-items: center;
   width: 100%;
   min-height: 42px;
