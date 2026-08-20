@@ -69,6 +69,8 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, AfterVie
   @Input({ transform: booleanAttribute }) closeOnItemClick = false;
   @Input({ transform: numberAttribute }) positionThreshold = 0.48;
   @Input({ transform: numberAttribute }) velocityThreshold = 0.42;
+  @Input({ transform: numberAttribute }) magneticStrength = 0.74;
+  @Input({ transform: numberAttribute }) magneticReleaseProgress = 0.36;
   @Input({ transform: numberAttribute }) snapAnimationMs = 440;
   @Input() activeItemId: string | null | undefined;
   @Input() footerMenu: MagneticMenuFooterMenu | null | undefined;
@@ -105,6 +107,7 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, AfterVie
     pointerId: number;
     startClientX: number;
     startSize: number;
+    startProgress: number;
     lastClientX: number;
     lastTime: number;
     velocity: number;
@@ -317,6 +320,7 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, AfterVie
       pointerId: event.pointerId,
       startClientX: event.clientX,
       startSize: this.currentSize,
+      startProgress: this.progress,
       lastClientX: event.clientX,
       lastTime: now,
       velocity: 0,
@@ -507,7 +511,8 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, AfterVie
     state.lastTime = now;
 
     this.zone.run(() => {
-      this.progress = this.sizeToProgress(nextSize);
+      const rawProgress = this.sizeToProgress(nextSize);
+      this.progress = this.applyMagneticDragProgress(rawProgress, state.startProgress);
       this.cdr.markForCheck();
     });
   }
@@ -728,6 +733,37 @@ export class StagyraMagneticMenuComponent implements OnInit, OnChanges, AfterVie
     }
 
     return this.clampProgress((size - this.closedSize) / range);
+  }
+
+  private applyMagneticDragProgress(rawProgress: number, startProgress: number): number {
+    const progress = this.clampProgress(rawProgress);
+    const strength = this.clampProgress(this.magneticStrength);
+    const releaseProgress = Math.min(Math.max(this.magneticReleaseProgress, 0.05), 0.75);
+
+    if (strength <= 0) {
+      return progress;
+    }
+
+    if (startProgress <= 0.08 && progress > startProgress && progress < releaseProgress) {
+      const t = this.clampProgress((progress - startProgress) / (releaseProgress - startProgress));
+      const releaseEase = this.smootherStep(t);
+      const resistance = 1 - (strength * (1 - releaseEase));
+      return this.clampProgress(startProgress + ((progress - startProgress) * resistance));
+    }
+
+    if (startProgress >= 0.92 && progress < startProgress && progress < releaseProgress) {
+      const t = this.clampProgress(progress / releaseProgress);
+      const closeEase = this.smootherStep(t);
+      const attraction = 1 - (strength * (1 - closeEase));
+      return this.clampProgress(progress * attraction);
+    }
+
+    return progress;
+  }
+
+  private smootherStep(value: number): number {
+    const t = this.clampProgress(value);
+    return t * t * t * (t * ((t * 6) - 15) + 10);
   }
 
   private clampSize(size: number): number {

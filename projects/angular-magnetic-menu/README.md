@@ -158,6 +158,8 @@ The component does not render internal add buttons such as "+ Add Status" or "+ 
 | `clickToToggle` | `true` | Enables click/keyboard toggle on the handle. |
 | `positionThreshold` | `0.48` | Drag progress needed to snap open when velocity is low. |
 | `velocityThreshold` | `0.42` | Pointer velocity in px/ms that snaps open or closed. |
+| `magneticStrength` | `0.74` | Magnetic resistance/attraction strength during drag. Set `0` to disable the extra magnetic curve. |
+| `magneticReleaseProgress` | `0.36` | Drag progress range where the menu feels stuck while opening and pulled while closing. |
 | `snapAnimationMs` | `440` | Final magnetic snap animation duration. |
 | `activeItemId` | `undefined` | Manual active item. Overrides router-derived active state. |
 | `closeOnItemClick` | `false` | Closes the panel after an item click. |
@@ -245,6 +247,7 @@ The component includes sensible defaults and exposes CSS variables:
 stagyra-magnetic-menu {
   --stagyra-magnetic-menu-height: 100dvh;
   --stagyra-magnetic-menu-panel-bg: #eef2f3;
+  --stagyra-magnetic-menu-text: #16191c;
   --stagyra-magnetic-menu-content-bg: #ffffff;
   --stagyra-magnetic-menu-content-radius: 18px;
   --stagyra-magnetic-menu-item-active-bg: #d9dddf;
@@ -254,6 +257,10 @@ stagyra-magnetic-menu {
   --stagyra-magnetic-menu-focus: #4e8cff;
 }
 ```
+
+`--stagyra-magnetic-menu-text` affects only the menu panel. The component does
+not set a text color or font family on the projected application content,
+which keeps the consuming application's normal CSS inheritance intact.
 
 Use the built-in dark theme directly:
 
